@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickRead AI</title>
+    <style>
+        body {
+            width: 400px;
+            height: 500px;
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #333333;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666666;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            background: #f8f8f8;
+            color: #666666;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mode-btn.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+        
+        .mode-btn:hover:not(.active) {
+            background: #e8e8e8;
+        }
+        
+        .summary-container {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        
+        .summary-content {
+            line-height: 1.5;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+        
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666666;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #1a73e8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 12px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #d93025;
+            padding: 12px;
+            background: #ffebee;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            background: white;
+            color: #1a73e8;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            background: #f8f8f8;
+        }
+        
+        .settings-btn {
+            color: #666666;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Onboarding screen */
+        .onboarding {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .onboarding h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+        
+        .onboarding p {
+            font-size: 13px;
+            color: #666666;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        
+        .setup-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .setup-btn:hover {
+            background: #1557b0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Summary View -->
+    <div id="main-view" class="hidden">
+        <div class="header">
+            <div class="title">QuickRead AI</div>
+            <button class="close-btn" id="close-btn">×</button>
+        </div>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="quick">📖 速览</button>
+            <button class="mode-btn" data-mode="learn">🎓 学习</button>
+            <button class="mode-btn" data-mode="decide">💼 决策</button>
+        </div>
+        
+        <div class="summary-container">
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <div>正在生成摘要...</div>
+            </div>
+            
+            <div id="error" class="error hidden"></div>
+            
+            <div id="summary" class="summary-content"></div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn" id="copy-btn">📋 复制</button>
+            <button class="action-btn" id="regenerate-btn">🔄 重生成</button>
+            <button class="action-btn settings-btn" id="settings-btn">⚙️ 设置</button>
+        </div>
+    </div>
+    
+    <!-- Onboarding View -->
+    <div id="onboarding-view" class="onboarding">
+        <h2>欢迎使用 QuickRead AI</h2>
+        <p>一秒看懂一个网页——根据你的目的，给出你需要的摘要。</p>
+        <p>请先配置你的 LLM API Key，支持 OpenAI、通义千问、DeepSeek 等提供商。</p>
+        <button class="setup-btn" id="setup-btn">立即配置</button>
+    </div>
+
+    <script src="prompts.js"></script>
+    <script src="api.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
