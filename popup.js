@@ -24,6 +24,7 @@ class QuickReadPopup {
         this.summaryContainer = document.getElementById('summary-container');
         this.summaryElement = document.getElementById('summary');
         this.loadingElement = document.getElementById('loading');
+        this.loadingMessage = document.getElementById('loading-message');
         this.errorElement = document.getElementById('error');
         this.modeButtons = document.querySelectorAll('.mode-btn');
         this.copyBtn = document.getElementById('copy-btn');
@@ -218,6 +219,7 @@ class QuickReadPopup {
                 this.currentPageContent,
                 config
             );
+            const requestBody = this.buildChatCompletionBody(config, messages);
 
             const response = await fetch(`${baseURL}/chat/completions`, {
                 method: 'POST',
@@ -225,12 +227,7 @@ class QuickReadPopup {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${config.apiKey}`
                 },
-                body: JSON.stringify({
-                    model: config.model,
-                    messages,
-                    max_tokens: this.getMaxTokens(config.detailLevel),
-                    stream: true
-                }),
+                body: JSON.stringify(requestBody),
                 signal: controller.signal
             });
 
@@ -297,6 +294,26 @@ class QuickReadPopup {
         };
     }
 
+    buildChatCompletionBody(config, messages) {
+        const body = {
+            model: config.model,
+            messages,
+            max_tokens: this.getMaxTokens(config.detailLevel),
+            stream: true
+        };
+
+        if (this.shouldDisableThinking(config)) {
+            body.enable_thinking = false;
+        }
+
+        return body;
+    }
+
+    shouldDisableThinking(config) {
+        const baseUrl = String(config.baseUrl || '').toLowerCase();
+        return config.provider === 'qwen' || baseUrl.includes('dashscope');
+    }
+
     async handleStreamResponse(response) {
         if (!response.body) {
             const data = await response.json();
@@ -309,6 +326,7 @@ class QuickReadPopup {
         const decoder = new TextDecoder('utf-8');
         let buffer = '';
         let contentReady = false;
+        let streamStarted = false;
 
         while (true) {
             const { done, value } = await reader.read();
@@ -316,12 +334,20 @@ class QuickReadPopup {
                 break;
             }
 
+            if (!streamStarted) {
+                streamStarted = true;
+                this.showStreamStarted();
+            }
+
             buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split('\n');
             buffer = lines.pop() || '';
 
             for (const line of lines) {
-                this.handleStreamLine(line);
+                const hadStreamActivity = this.handleStreamLine(line);
+                if (hadStreamActivity && !this.currentSummary) {
+                    this.showStreamStarted();
+                }
             }
 
             if (this.currentSummary) {
@@ -349,23 +375,64 @@ class QuickReadPopup {
     handleStreamLine(line) {
         const trimmedLine = line.trim();
         if (!trimmedLine.startsWith('data:')) {
-            return;
+            return false;
         }
 
         const data = trimmedLine.slice(5).trim();
         if (!data || data === '[DONE]') {
-            return;
+            return false;
         }
 
         try {
             const parsed = JSON.parse(data);
-            const delta = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.message?.content || '';
+            const delta = this.extractStreamText(parsed);
             if (delta) {
                 this.currentSummary += delta;
             }
+            return Boolean(delta || this.extractStreamActivity(parsed));
         } catch (error) {
             console.debug('[QuickRead] Skipping malformed stream chunk:', error);
+            return false;
         }
+    }
+
+    extractStreamText(parsed) {
+        const choice = parsed.choices?.[0] || {};
+        const delta = choice.delta || {};
+
+        return [
+            delta.content,
+            delta.text,
+            choice.message?.content,
+            parsed.delta,
+            parsed.delta?.text,
+            parsed.text,
+            parsed.content_block?.text
+        ].map(value => this.normalizeStreamText(value)).find(Boolean) || '';
+    }
+
+    normalizeStreamText(value) {
+        if (typeof value === 'string') {
+            return value;
+        }
+        if (Array.isArray(value)) {
+            return value
+                .map(item => this.normalizeStreamText(item?.text || item?.content))
+                .join('');
+        }
+        return '';
+    }
+
+    extractStreamActivity(parsed) {
+        const choice = parsed.choices?.[0] || {};
+        const delta = choice.delta || {};
+
+        return [
+            delta.reasoning_content,
+            delta.role,
+            choice.finish_reason,
+            parsed.type
+        ].some(value => value !== undefined && value !== null && value !== '');
     }
 
     renderSummaryNow() {
@@ -734,10 +801,19 @@ ${pageContent}`
 
     showLoading() {
         this.loadingElement.classList.remove('hidden');
+        if (this.loadingMessage) {
+            this.loadingMessage.textContent = '正在生成摘要...';
+        }
         this.summaryElement.textContent = '';
         this.errorElement.classList.add('hidden');
         this.cacheNote.classList.add('hidden');
         this.mainView.classList.remove('hidden');
+    }
+
+    showStreamStarted() {
+        if (this.loadingMessage && !this.currentSummary) {
+            this.loadingMessage.textContent = '模型正在推理，等待正文输出...';
+        }
     }
 
     hideLoading() {
