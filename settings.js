@@ -1,5 +1,9 @@
 // QuickRead AI Settings Script
 
+// Providers visible in the store-friendly首发 version.
+// Other provider definitions are kept below for future use — just add them to this set.
+const VISIBLE_PROVIDERS = new Set(['openai', 'anthropic', 'gemini', 'custom']);
+
 class QuickReadSettings {
     constructor() {
         this.providers = {
@@ -325,8 +329,14 @@ class QuickReadSettings {
                 'rememberSummaries'
             ]);
 
-            if (result.provider && this.providers[result.provider]) {
-                this.providerSelect.value = result.provider;
+            const savedProvider = result.provider;
+            const providerValid = savedProvider && this.providers[savedProvider] && VISIBLE_PROVIDERS.has(savedProvider);
+            if (savedProvider && this.providers[savedProvider] && !VISIBLE_PROVIDERS.has(savedProvider)) {
+                // Saved provider is hidden in首发 version — fall back to openai
+                console.log('[QuickRead] Saved provider "%s" is hidden in首发 version, falling back to openai', savedProvider);
+            }
+            if (providerValid) {
+                this.providerSelect.value = savedProvider;
                 this.updateProviderInfo();
             }
 

@@ -42,7 +42,7 @@ QuickRead AI uses browser data only to provide or improve the user-facing page s
 
 ## Security
 
-QuickRead AI uses HTTPS for supported remote API providers. Plain HTTP custom API URLs are allowed only for localhost or 127.0.0.1 during local development.
+QuickRead AI uses HTTPS for API providers. Built-in providers are limited to: api.openai.com, api.anthropic.com, generativelanguage.googleapis.com. Custom providers are allowed for any HTTPS or localhost origin configured by the user.
 
 ## Contact
 
