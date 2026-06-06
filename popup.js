@@ -10,7 +10,6 @@ class QuickReadPopup {
         this.currentSourceType = 'page';
         this.currentSummary = '';
         this.abortController = null;
-        this.renderScheduled = false;
         this.cacheTtlMs = 24 * 60 * 60 * 1000;
         this.maxCacheEntries = 30;
 
@@ -309,9 +308,7 @@ class QuickReadPopup {
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let buffer = '';
-
-        this.hideLoading();
-        this.mainView.classList.remove('hidden');
+        let contentReady = false;
 
         while (true) {
             const { done, value } = await reader.read();
@@ -326,12 +323,27 @@ class QuickReadPopup {
             for (const line of lines) {
                 this.handleStreamLine(line);
             }
+
+            if (this.currentSummary) {
+                if (!contentReady) {
+                    contentReady = true;
+                    this.hideLoading();
+                    this.mainView.classList.remove('hidden');
+                }
+                this.renderSummaryNow();
+            }
         }
 
         if (buffer.trim()) {
             this.handleStreamLine(buffer);
         }
-        this.renderSummaryNow();
+        if (this.currentSummary) {
+            if (!contentReady) {
+                this.hideLoading();
+                this.mainView.classList.remove('hidden');
+            }
+            this.renderSummaryNow();
+        }
     }
 
     handleStreamLine(line) {
@@ -349,28 +361,11 @@ class QuickReadPopup {
             const parsed = JSON.parse(data);
             const delta = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.message?.content || '';
             if (delta) {
-                this.appendSummaryDelta(delta);
+                this.currentSummary += delta;
             }
         } catch (error) {
             console.debug('[QuickRead] Skipping malformed stream chunk:', error);
         }
-    }
-
-    appendSummaryDelta(delta) {
-        this.currentSummary += delta;
-        this.scheduleSummaryRender();
-    }
-
-    scheduleSummaryRender() {
-        if (this.renderScheduled) {
-            return;
-        }
-
-        this.renderScheduled = true;
-        requestAnimationFrame(() => {
-            this.renderScheduled = false;
-            this.renderSummaryNow();
-        });
     }
 
     renderSummaryNow() {
