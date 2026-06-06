@@ -5,145 +5,215 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickRead AI - 设置</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            width: 500px;
+            width: 520px;
+            margin: 0;
             padding: 24px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #ffffff;
-            color: #333333;
+            color: #202124;
         }
-        
+
         .header {
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }
-        
+
         .title {
             font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
+            font-weight: 650;
+            color: #202124;
+            margin-bottom: 5px;
         }
-        
+
         .subtitle {
-            font-size: 14px;
-            color: #666666;
+            font-size: 13px;
+            color: #5f6368;
+            line-height: 1.45;
         }
-        
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
-        
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
         .form-label {
             display: block;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: #333333;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            color: #202124;
         }
-        
+
         .form-control {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d0d0d0;
-            border-radius: 6px;
+            padding: 10px 11px;
+            border: 1px solid #dadce0;
+            border-radius: 7px;
             font-size: 14px;
-            background: white;
+            background: #ffffff;
+            color: #202124;
         }
-        
+
         .form-control:focus {
             outline: none;
             border-color: #1a73e8;
-            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.16);
         }
-        
+
+        .input-with-button {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+        }
+
+        .compact-btn {
+            white-space: nowrap;
+            padding: 0 12px;
+            border: 1px solid #dadce0;
+            border-radius: 7px;
+            background: #ffffff;
+            color: #3c4043;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .compact-btn:hover {
+            background: #f8fafd;
+            border-color: #c5c9ce;
+        }
+
         .password-input {
-            font-family: monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         }
-        
+
         .help-text {
             font-size: 12px;
-            color: #666666;
+            color: #5f6368;
             margin-top: 6px;
-            line-height: 1.4;
+            line-height: 1.45;
         }
-        
+
         .provider-link {
             color: #1a73e8;
             text-decoration: none;
+            font-weight: 600;
         }
-        
+
         .provider-link:hover {
             text-decoration: underline;
         }
-        
+
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding: 11px 12px;
+            border: 1px solid #e0e3e7;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .checkbox-row input {
+            margin-top: 2px;
+        }
+
+        .checkbox-row label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .privacy-note {
+            margin-top: 6px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #5f6368;
+        }
+
         .action-buttons {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: flex-end;
-            margin-top: 24px;
+            margin-top: 22px;
         }
-        
+
         .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 9px 16px;
+            border-radius: 7px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.15s ease, border-color 0.15s ease;
         }
-        
+
         .btn-primary {
             background: #1a73e8;
-            color: white;
-            border: none;
+            color: #ffffff;
+            border: 0;
         }
-        
+
         .btn-primary:hover {
             background: #1557b0;
         }
-        
+
         .btn-secondary {
-            background: #f8f8f8;
-            color: #333333;
-            border: 1px solid #d0d0d0;
+            background: #ffffff;
+            color: #3c4043;
+            border: 1px solid #dadce0;
         }
-        
+
         .btn-secondary:hover {
-            background: #e8e8e8;
+            background: #f8fafd;
+            border-color: #c5c9ce;
         }
-        
+
         .status-message {
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-top: 16px;
             font-size: 13px;
+            line-height: 1.45;
             display: none;
         }
-        
+
         .status-success {
             background: #e6f4ea;
             color: #137333;
             border: 1px solid #81c995;
         }
-        
+
         .status-error {
-            background: #ffebee;
-            color: #d93025;
-            border: 1px solid #f28b82;
+            background: #fce8e6;
+            color: #b3261e;
+            border: 1px solid #f5c2bd;
         }
-        
+
         .loading {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #f3f3f3;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #e8eaed;
             border-top: 2px solid #1a73e8;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-right: 8px;
-            vertical-align: middle;
+            vertical-align: -2px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -152,9 +222,9 @@
         .test-result {
             margin-top: 16px;
             padding: 12px;
-            background: #f8f8f8;
-            border: 1px solid #d0d0d0;
-            border-radius: 6px;
+            background: #f8fafd;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
         }
@@ -172,68 +242,116 @@
             font-size: 12px;
             white-space: pre-wrap;
             word-break: break-word;
-            color: #333;
+            color: #202124;
+        }
+
+        .close-result {
+            cursor: pointer;
+            color: #5f6368;
+            font-size: 16px;
+            line-height: 1;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="title">QuickRead AI — 设置</div>
-        <div class="subtitle">配置你的 LLM API Key</div>
+        <div class="title">QuickRead AI 设置</div>
+        <div class="subtitle">配置 OpenAI 兼容接口、摘要语言和详细程度。API Key 只保存在本机。</div>
     </div>
-    
+
     <form id="settings-form">
         <div class="form-group">
             <label class="form-label" for="provider">LLM 提供商</label>
             <select id="provider" class="form-control">
                 <option value="openai">OpenAI</option>
+                <option value="anthropic">Claude</option>
+                <option value="gemini">Google Gemini</option>
                 <option value="qwen">通义千问</option>
                 <option value="deepseek">DeepSeek</option>
+                <option value="kimi">Kimi</option>
+                <option value="xai">xAI Grok</option>
+                <option value="mistral">Mistral AI</option>
+                <option value="groq">Groq</option>
+                <option value="openrouter">OpenRouter</option>
                 <option value="custom">自定义</option>
             </select>
             <div class="help-text">
-                支持 OpenAI 兼容格式的提供商。选择“自定义”可输入完整 API URL。
+                内置服务使用 OpenAI 兼容的 chat/completions 格式。
             </div>
         </div>
-        
+
         <div class="form-group">
             <label class="form-label" for="apiKey">API Key</label>
-            <input type="password" id="apiKey" class="form-control password-input" placeholder="sk-··················">
+            <input type="password" id="apiKey" class="form-control password-input" placeholder="sk-..." autocomplete="off">
             <div class="help-text">
-                🔗 没有 Key？前往 
-                <a href="#" class="provider-link" id="get-key-link">获取 API Key</a>
+                没有 Key？前往 <a href="#" class="provider-link" id="get-key-link">获取 API Key</a>
             </div>
         </div>
-        
+
         <div class="form-group" id="baseUrl-group" style="display: none;">
             <label class="form-label" for="baseUrl">API 基础 URL</label>
-            <input type="text" id="baseUrl" class="form-control" placeholder="https://api.openai.com/v1">
+            <input type="text" id="baseUrl" class="form-control" placeholder="https://api.openai.com/v1" autocomplete="off">
             <div class="help-text">
-                自定义提供商时请输入完整的 API 基础 URL（包含 /v1 等路径）。
+                自定义服务请输入完整基础 URL，例如 https://example.com/v1。
             </div>
         </div>
-        
+
         <div class="form-group">
             <label class="form-label" for="model">模型名称</label>
-            <input type="text" id="model" class="form-control" placeholder="gpt-4o-mini">
-            <div class="help-text">
-                输入完整的模型名称，如 gpt-4o-mini、qwen-plus、claude-3-haiku 等。
+            <div class="input-with-button">
+                <input type="text" id="model" class="form-control" list="model-options" placeholder="gpt-5.5" autocomplete="off">
+                <button type="button" class="compact-btn" id="refresh-models-btn">刷新</button>
+            </div>
+            <datalist id="model-options"></datalist>
+            <div class="help-text" id="model-help">
+                可从主流模型中选择，也可以直接输入提供商支持的模型 ID。
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="outputLanguage">输出语言</label>
+                <select id="outputLanguage" class="form-control">
+                    <option value="auto">跟随原文</option>
+                    <option value="zh">简体中文</option>
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="detailLevel">详细程度</label>
+                <select id="detailLevel" class="form-control">
+                    <option value="brief">精简</option>
+                    <option value="balanced">均衡</option>
+                    <option value="deep">详细</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="checkbox-row">
+            <input type="checkbox" id="rememberSummaries">
+            <div>
+                <label for="rememberSummaries">缓存 24 小时内的同页摘要</label>
+                <div class="privacy-note">
+                    减少重复请求和 API 消耗。摘要缓存、API Key 和偏好都保存在 chrome.storage.local。
+                </div>
             </div>
         </div>
     </form>
-    
+
     <div id="status-message" class="status-message"></div>
 
     <div class="action-buttons">
-        <button type="button" class="btn btn-secondary" id="clear-btn">清除 Key</button>
-        <button type="button" class="btn btn-secondary" id="test-btn">🧪 测试连接</button>
+        <button type="button" class="btn btn-secondary" id="clear-btn">清除连接</button>
+        <button type="button" class="btn btn-secondary" id="test-btn">测试连接</button>
         <button type="button" class="btn btn-primary" id="save-btn">保存</button>
     </div>
 
     <div id="test-result" class="test-result" style="display: none;">
         <div class="test-result-header">
-            <strong>测试响应：</strong>
-            <span id="test-result-close" style="cursor: pointer; float: right;">×</span>
+            <strong>测试响应</strong>
+            <span id="test-result-close" class="close-result">×</span>
         </div>
         <pre id="test-result-content"></pre>
     </div>

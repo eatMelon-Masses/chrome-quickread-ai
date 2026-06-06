@@ -1,4 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect width="16" height="16" fill="#4285F4"/>
-  <text x="8" y="12" text-anchor="middle" fill="white" font-size="10" font-family="Arial">Q</text>
+  <defs>
+    <linearGradient id="quickread-bg" x1="3" y1="2" x2="13" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1A73E8"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="12" height="12" rx="3" fill="url(#quickread-bg)"/>
+  <path d="M5.3 3.8H9L10.8 5.6V12H5.3C4.6 12 4 11.4 4 10.7V5.1C4 4.4 4.6 3.8 5.3 3.8Z" fill="#FFFFFF"/>
+  <path d="M9 3.8V5.1C9 5.6 9.4 6 9.9 6H10.8L9 3.8Z" fill="#DCEBFF"/>
+  <path d="M5.6 7H8.4" stroke="#1A73E8" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M5.6 9H8.8" stroke="#14B8A6" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M11.6 8.5L12.1 9.8L13.4 10.3L12.1 10.8L11.6 12.1L11.1 10.8L9.8 10.3L11.1 9.8L11.6 8.5Z" fill="#FACC15"/>
 </svg>

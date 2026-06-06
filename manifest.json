@@ -4,17 +4,19 @@
   "version": "1.0.0",
   "description": "一秒看懂一个网页——根据你的目的，给出你需要的摘要。无需注册，零月费，用自己的 API Key。",
   "icons": {
-    "16": "icons/icon-16.svg",
-    "48": "icons/icon-48.svg",
-    "128": "icons/icon-128.svg"
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_title": "QuickRead AI",
     "default_icon": {
-      "16": "icons/icon-16.svg",
-      "48": "icons/icon-48.svg",
-      "128": "icons/icon-128.svg"
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
     }
   },
   "permissions": [
@@ -24,15 +26,22 @@
   ],
   "host_permissions": [
     "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://generativelanguage.googleapis.com/*",
     "https://dashscope.aliyuncs.com/*",
-    "https://api.deepseek.com/*"
+    "https://dashscope-intl.aliyuncs.com/*",
+    "https://dashscope-us.aliyuncs.com/*",
+    "https://api.deepseek.com/*",
+    "https://api.moonshot.ai/*",
+    "https://api.x.ai/*",
+    "https://api.mistral.ai/*",
+    "https://api.groq.com/*",
+    "https://openrouter.ai/*"
   ],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_end"
-    }
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
   ],
   "web_accessible_resources": [],
   "options_page": "settings.html"

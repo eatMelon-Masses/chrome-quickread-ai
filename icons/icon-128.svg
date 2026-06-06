@@ -1,4 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect width="128" height="128" fill="#4285F4"/>
-  <text x="64" y="85" text-anchor="middle" fill="white" font-size="80" font-family="Arial">Q</text>
+  <defs>
+    <linearGradient id="quickread-bg" x1="24" y1="18" x2="104" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1A73E8"/>
+      <stop offset="0.58" stop-color="#2B7DE9"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="8" y="8" width="112" height="112" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#174EA6" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect x="16" y="16" width="96" height="96" rx="22" fill="url(#quickread-bg)" filter="url(#soft-shadow)"/>
+  <path d="M41 29H75L91 45V91C91 95.4 87.4 99 83 99H41C36.6 99 33 95.4 33 91V37C33 32.6 36.6 29 41 29Z" fill="#FFFFFF" opacity="0.96"/>
+  <path d="M75 29V42C75 46.4 78.6 50 83 50H91L75 29Z" fill="#DCEBFF"/>
+  <path d="M45 56H68" stroke="#1A73E8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M45 70H77" stroke="#1A73E8" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+  <path d="M45 84H62" stroke="#14B8A6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M89 68L92.6 78.4L103 82L92.6 85.6L89 96L85.4 85.6L75 82L85.4 78.4L89 68Z" fill="#FACC15"/>
+  <circle cx="89" cy="82" r="4.6" fill="#FFFFFF"/>
 </svg>
